@@ -42,30 +42,7 @@ function BottomNav() {
           <i className="icon iconfont iconzhenzhunaicha"></i>
           <span className="tit">奶茶攻略</span>
         </NavLink>
-        <NavLink
-          to={`${CONTEXT}/clean`}
-          className="noselected"
-          activeClassName="selected"
-        >
-          <i className="icon iconfont iconxingxing"></i>
-          <span className="tit">污渍清除</span>
-        </NavLink>
-        <NavLink
-          to={`${CONTEXT}/security`}
-          className="noselected"
-          activeClassName="selected"
-        >
-          <i className="icon iconfont iconanquan"></i>
-          <span className="tit">随时自保</span>
-        </NavLink>
-        <NavLink
-          to={`${CONTEXT}/bling`}
-          className="noselected"
-          activeClassName="selected"
-        >
-          <i className="icon iconfont iconzan"></i>
-          <span className="tit">正义点评</span>
-        </NavLink>
+        
       </div>
     )
 }
