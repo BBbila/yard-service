@@ -2,12 +2,11 @@ import React, {useState} from 'react';
 import styles from './bottomNav.module.less';
 import { NavLink } from 'react-router-dom';
 import { CONTEXT } from '../../config/index';
+import {HomeOutlined,RedditOutlined,ProfileOutlined,UserOutlined} from '@ant-design/icons';
 
 function BottomNav() {
     //状态
     
-
-
     return (
         <div className={styles.bottomNavWrap}>
         <NavLink
@@ -15,34 +14,33 @@ function BottomNav() {
           className="noselected"
           activeClassName="selected"
         >
-          <i className="iconfire iconfont iconredu"></i>
-          <span className="tit">热度推荐</span>
+          <HomeOutlined className="icon homeIcon" /><br></br>
+          <span className="tit">首页</span>
         </NavLink>
         <NavLink
-          to={`${CONTEXT}/treasure`}
+          to={`${CONTEXT}/square`}
           className="noselected"
           activeClassName="selected"
         >
-          <i className="icon iconfont iconbaoxiang"></i>
-          <span className="tit">变废为宝</span>
+          <RedditOutlined className="icon squareIcon"/><br></br>
+          <span className="tit">广场</span>
         </NavLink>
         <NavLink
-          to={`${CONTEXT}/food`}
+          to={`${CONTEXT}/order`}
           className="noselected"
           activeClassName="selected"
         >
-          <i className="icon iconfont iconshiwumiantiao"></i>
-          <span className="tit">食材烹饪</span>
+          <ProfileOutlined className="icon orderIcon"/><br></br>
+          <span className="tit">订单</span>
         </NavLink>
         <NavLink
-          to={`${CONTEXT}/drink`}
+          to={`${CONTEXT}/mine`}
           className="noselected"
           activeClassName="selected"
         >
-          <i className="icon iconfont iconzhenzhunaicha"></i>
-          <span className="tit">奶茶攻略</span>
+          <UserOutlined className="icon mineIcon"/><br></br>
+          <span className="tit">我的</span>
         </NavLink>
-        
       </div>
     )
 }
