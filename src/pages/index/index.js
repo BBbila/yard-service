@@ -3,18 +3,19 @@ import styles from  './index.module.less';
 import BottomNav from '../../components/bottomNav/bottomNav'
 import {Flex,NoticeBar,Button} from 'antd-mobile'
 
+
 function Index(props) {
   const [onlineNum,setOnlineNum] = useState(23);
   const [isHidden,setIsHiddenm] = useState(false);
   const BMap = window.BMap;
   
   useEffect(() => {
-    var map = new BMap.Map("allmap"); // 创建Map实例
-    map.centerAndZoom(new BMap.Point(116.404, 39.915), 11); // 初始化地图,设置中心点坐标和地图级别
-    map.addControl(new BMap.MapTypeControl()); //添加地图类型控件
-    map.setCurrentCity("北京"); // 设置地图显示的城市 此项是必须设置的
-    map.enableScrollWheelZoom(true); //开启鼠标滚轮缩放
-  })
+    var map = new BMap.Map("allmap");
+    map.centerAndZoom(new BMap.Point(116.280190, 40.049191), 19);
+    map.enableScrollWheelZoom(true);
+    map.setHeading(50);
+    map.setTilt(45);
+  },[])
 
   return (
     <div className={styles.indexPageWrap}>
