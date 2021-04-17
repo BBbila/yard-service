@@ -6,6 +6,41 @@
     overflow: hidden;
     position: relative;
     :global {
+        .mainSpin {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%,-50%);
+            z-index: 99999;
+        }
+        .searchTopBar{
+            position: fixed;
+            top: 0px;
+            left: 0px;
+            z-index: 999;
+            width: 100%;
+            box-sizing: border-box;
+            padding: 0px 10px ;
+            height: 45px;
+            background-color: #fff;
+            .am-search {
+            background-color: #fff !important;
+                .am-search-input {
+                    border: 1px solid #c4c1bf;
+                    border-radius: 20px;
+                }
+            }
+        }
+        .noticeIcon{
+            display: block;
+            position: fixed;
+            bottom: 254.5px;
+            left: 8px;
+            font-size: 16px;
+            z-index: 1000;
+            color: #f76a24;
+            fill: #f76a24;
+        }
         .functionalBtnCon {
             position: fixed;
             bottom: 120px;
