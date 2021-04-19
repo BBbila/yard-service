@@ -13,7 +13,9 @@ function Index(props) {
   const BMAP_STATUS_SUCCESS = 0; // BMAP_STATUS_SUCCESS 位置检索成功，数值为0
   const [isHidden,setIsHiddenm] = useState(false); //是否隐藏通告栏
   const [searchValue,setSearchValue] = useState('百度科技园');
-  const [isGetCorder,setIsGetCorder] = useState('百度科技园');
+  const [isGetCorder,setIsGetCorder] = useState(false);
+  const [isOpenPop,setIsOpenPop] = useState(false);
+
 
  
   
@@ -29,6 +31,8 @@ function Index(props) {
     //获取当前位置
     geolocation.getCurrentPosition(function(r){
         if(this.getStatus() == BMAP_STATUS_SUCCESS){
+          //隐藏loading
+          setIsGetCorder(true);
           let currentPoint = new BMap.Point(r.point.lng,r.point.lat);//用所定位的经纬度查找所在地省市街道等信息
           let mk = new BMap.Marker(r.point);//创建标注
           map.centerAndZoom(currentPoint, 20);
@@ -76,7 +80,8 @@ function Index(props) {
   return (
     <div className={styles.indexPageWrap}>
       <div id="allmap"></div>
-      <Spin className="mainSpin" size="middle" tip="正在获取您的当前位置..."/>
+
+      <Spin className={isGetCorder == true ? 'mainSpinHide' : 'mainSpin'} size="middle" tip="正在获取您的当前位置..."/>
       {/* 头部搜索栏 */}
       <Flex className="searchTopBar">
         <div className="areaText" style={{width:'20%',position:'relative'}}>
