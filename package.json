@@ -79,7 +79,8 @@
     "workbox-webpack-plugin": "5.1.4"
   },
   "scripts": {
-    "start": "set PORT= 8888 && node scripts/start.js",
+    "start-http": "set PORT=8888&&node scripts/start.js",
+    "start": "set HTTPS=true&&set SSL_CRT_FILE=certificate.pem&&set SSL_KEY_FILE=privatekey.pem&&set PORT=8888&&node scripts/start.js",
     "build": "node scripts/build.js",
     "test": "node scripts/test.js"
   },
@@ -159,6 +160,7 @@
     ]
   },
   "devDependencies": {
+    "cross-env": "^7.0.3",
     "eslint-plugin-react-hooks": "^4.2.0"
   }
 }

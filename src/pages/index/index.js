@@ -8,7 +8,7 @@ import { options } from 'less';
 
 function Index(props) {
   const BMap = window.BMap;
-  let [map,setMap] = useState(null);
+  // let [map,setMap] = useState(null);
   const [local,setLocal] = useState(null);
   const [onlineNum,setOnlineNum] = useState(23);
   const BMAP_STATUS_SUCCESS = 0; // BMAP_STATUS_SUCCESS 位置检索成功，数值为0
@@ -18,13 +18,10 @@ function Index(props) {
   const [searchValue,setSearchValue] = useState('百度科技园');
   const [isGetCorder,setIsGetCorder] = useState(false);
   const [isOpenPop,setIsOpenPop] = useState(false);
-
-
- 
   
   useEffect(() => {
-    map = new BMap.Map("allmap");
-    setMap(map);
+    var map = new BMap.Map("allmap");
+    // setMap(map);
     let point = new BMap.Point(116.280190, 40.049191);
     let geolocation = new BMap.Geolocation();
     map.centerAndZoom(point, 18);
@@ -39,33 +36,33 @@ function Index(props) {
       maximumAge: 0
     };
     //成功获取坐标
-  function showSuccess(position) {
-    var x = position.coords.longitude;
-    var y = position.coords.latitude;
-    var ggPoint = new BMap.Point(x,y);
-    //坐标转换完之后的回调函数
-    var translateCallback = function (data){
-      if(data.status === 0) {
-        var marker = new BMap.Marker(data.points[0]);
-        map.addOverlay(marker);
-        var label = new BMap.Label("转换后的百度坐标（正确）",{offset:new BMap.Size(10, -10)});
-        marker.setLabel(label); //添加百度label
-        map.centerAndZoom(data.points[0], 20);
-        map.panTo(data.points[0]); //移动地图
+    function showSuccess(position) {
+      var x = position.coords.longitude;
+      var y = position.coords.latitude;
+      var ggPoint = new BMap.Point(x,y);
+      //坐标转换完之后的回调函数
+      var translateCallback = function (data){
+        if(data.status === 0) {
+          var marker = new BMap.Marker(data.points[0]);
+          map.addOverlay(marker);
+          var label = new BMap.Label("转换后的百度坐标（正确）",{offset:new BMap.Size(10, -10)});
+          marker.setLabel(label); //添加百度label
+          map.centerAndZoom(data.points[0], 20);
+          map.panTo(data.points[0]); //移动地图
+        }
       }
+      setTimeout(function(){
+          var convertor = new BMap.Convertor();
+          var pointArr = [];
+          pointArr.push(ggPoint);
+          convertor.translate(pointArr, COORDINATES_WGS84, COORDINATES_BD09, translateCallback)
+      }, 1000);
     }
-    setTimeout(function(){
-        var convertor = new BMap.Convertor();
-        var pointArr = [];
-        pointArr.push(ggPoint);
-        convertor.translate(pointArr, COORDINATES_WGS84, COORDINATES_BD09, translateCallback)
-    }, 1000);
-  }
-  //获取坐标失败
-  function showErro(positionError) {
-    Toast.info('获取坐标失败');
-    console.log("浏览器获取坐标失败原因：",positionError);
-  }
+    //获取坐标失败
+    function showErro(positionError) {
+      Toast.info('获取坐标失败');
+      console.log("浏览器获取坐标失败原因：",positionError);
+    }
     localgps.getCurrentPosition(showSuccess,showErro,options);
     //获取当前位置
     // geolocation.getCurrentPosition(function(r){
@@ -127,16 +124,16 @@ function Index(props) {
 
   // 搜索
   function handleSrearchKeyWords() {
-    map.clearOverlays(); //清除地图上所有覆盖物
-    local = new BMap.LocalSearch(map, { //智能搜索
-        onSearchComplete: myFun
-    });
-    local.search(searchValue);
+    // map.clearOverlays(); //清除地图上所有覆盖物
+    // local = new BMap.LocalSearch(map, { //智能搜索
+    //     onSearchComplete: myFun
+    // });
+    // local.search(searchValue);
   }
   function myFun() {
-    var searchPt = local.getResults().getPoi(0).point; //获取第一个智能搜索的结果
-    map.centerAndZoom(searchPt, 18);
-    map.addOverlay(new BMap.Marker(searchPt)); //添加标注
+    // var searchPt = local.getResults().getPoi(0).point; //获取第一个智能搜索的结果
+    // map.centerAndZoom(searchPt, 18);
+    // map.addOverlay(new BMap.Marker(searchPt)); //添加标注
   }
 
 
