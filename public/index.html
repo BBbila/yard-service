@@ -9,6 +9,7 @@
       name="description"
       content="Web site created using create-react-app"
     />
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
     <!--
       manifest.json provides metadata used when your web app is installed on a
@@ -29,13 +30,10 @@
   <body>
     
     <div id="root"></div>
-    <script
-      type="text/javascript"
-      src="http://api.map.baidu.com/api?type=webgl&v=1.0&ak=km0if9tnyPmKyykBUp3xTG1D8GbGwOtk"
-    >
-	</script>
+    <!-- 百度地图api2.0版本 -->
+    <script type="text/javascript" src="https://api.map.baidu.com/api?v=2.0&ak=km0if9tnyPmKyykBUp3xTG1D8GbGwOtk&services=true&s=1"></script>
     <script>
-      window.BMap = BMapGL;
+      window.BMap = BMap;
     </script>
   </body>
 </html>
