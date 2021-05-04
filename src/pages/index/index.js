@@ -5,17 +5,16 @@ import {Flex,NoticeBar,Button,Icon,SearchBar,Toast} from 'antd-mobile'
 import { NotificationFilled } from '@ant-design/icons';
 import { Spin } from 'antd';
 import { options } from 'less';
+import AutoComplete from 'react-bmapgl/Services/AutoComplete'
 
 function Index(props) {
   const BMap = window.BMap;
   let [map,setMap] = useState(null);
   let [local,setLocal] = useState(null);
   const [onlineNum,setOnlineNum] = useState(23);
-  const BMAP_STATUS_SUCCESS = 0; // BMAP_STATUS_SUCCESS 位置检索成功，数值为0
   const COORDINATES_BD09 = 5; //COORDINATES_BD09 百度的经纬度坐标
   const COORDINATES_WGS84 = 1; //WGS84坐标
   const [isHidden,setIsHiddenm] = useState(true); //是否隐藏通告栏
-  const [searchValue,setSearchValue] = useState('百度科技园');
   const [isGetCorder,setIsGetCorder] = useState(false);
   const [isOpenPop,setIsOpenPop] = useState(false);
   
@@ -23,12 +22,10 @@ function Index(props) {
     map = new BMap.Map("allmap");
     setMap(map);
     let point = new BMap.Point(116.280190, 40.049191);
-    let geolocation = new BMap.Geolocation();
     map.centerAndZoom(point, 18);
     map.enableScrollWheelZoom(true);
-    map.setHeading(50); //地图旋转角度
-    map.setTilt(45); //地图倾斜角度
-
+    map.setHeading(40);
+	  map.setTilt(60);
 
     //浏览器获取当前坐标
     let localgps = navigator.geolocation;
@@ -37,55 +34,7 @@ function Index(props) {
       timeout: 500000,
       maximumAge: 0
     };
-    
     localgps.getCurrentPosition(showSuccess,showErro,options);
-
-    //百度地图api获取当前位置
-    // geolocation.getCurrentPosition(function(r){
-    //     if(this.getStatus() == BMAP_STATUS_SUCCESS){
-    //       //隐藏loading
-    //       setIsGetCorder(true);
-    //       //展示在线人数
-    //         setIsHiddenm(false);
-    //       //用所定位的经纬度查找所在地省市街道等信息
-    //       let currentPoint = new BMap.Point(r.point.lng,r.point.lat);
-    //       console.log("87989",r)
-    //       let mk = new BMap.Marker(r.point);//创建标注
-
-    //       let convertor = new BMap.Convertor();
-    //       let pointArr = [];
-    //       pointArr.push(currentPoint);
-    //       convertor.translate(pointArr,1,5,data=> {
-    //         if(data.status === 0) {
-    //           console.log("24342",data);
-    //           let mk = new BMap.Marker(data.points[0]);
-    //           map.centerAndZoom(data.points[0], 20);
-    //           map.addOverlay(mk);//将标注添加到地图中
-    //           map.panTo(data.points[0]); //移动地图
-    //         }
-    //       })
-
-          
-    //       let gc = new BMap.Geocoder();
-    //       gc.getLocation(currentPoint, function(rs){
-    //           if(rs.addressComponents.street && rs.addressComponents.streetNumber) {
-    //             var adstr = rs.addressComponents.street + rs.addressComponents.streetNumber;
-    //           }else {
-    //             var adstr = '';
-    //           }
-    //           var currentAddress = rs.address;
-    //           Toast.info("您所在的位置是：" + currentAddress);
-    //           //将当前位置回显到搜索框
-    //           setSearchValue(adstr);
-    //       });
-          
-
-
-    //     }else {
-    //         console.log("获取当前位置错误：",this.getStatus());
-    //         Toast.info('暂时无法获取当前位置');
-    //     }
-    // },{enableHighAccuracy: true});
    
   },[])
 
@@ -96,12 +45,11 @@ function Index(props) {
     var ggPoint = new BMap.Point(x,y);
     //坐标转换完之后的回调函数
     var translateCallback = function (data){
+      console.log("8989",data);
       if(data.status === 0) {
         var marker = new BMap.Marker(data.points[0]);
         map.addOverlay(marker);
-        var label = new BMap.Label("转换后的百度坐标（正确）",{offset:new BMap.Size(10, -10)});
-        marker.setLabel(label); //添加百度label
-        map.centerAndZoom(data.points[0], 20);
+        map.centerAndZoom(data.points[0], 18);
         map.panTo(data.points[0]); //移动地图
       }
     }
@@ -109,9 +57,14 @@ function Index(props) {
         var convertor = new BMap.Convertor();
         var pointArr = [];
         pointArr.push(ggPoint);
-        convertor.translate(pointArr, COORDINATES_WGS84, COORDINATES_BD09, translateCallback)
+        convertor.translate(pointArr, COORDINATES_WGS84, COORDINATES_BD09, translateCallback);
+        //隐藏loading
+        setIsGetCorder(true);
+        //展示在线人数
+        setIsHiddenm(false);
     }, 1000);
   }
+
   //获取坐标失败
   function showErro(positionError) {
     Toast.info('获取坐标失败');
@@ -127,18 +80,20 @@ function Index(props) {
   }
 
   // 搜索
-  function handleSrearchKeyWords() {
+  function handleSrearchKeyWords(e) {
+    let keyValue = e.keyword;
     map.clearOverlays(); //清除地图上所有覆盖物
+    function myFun() {
+      let searchPt = local.getResults().getPoi(0).point; //获取第一个智能搜索的结果
+      map.centerAndZoom(searchPt, 18);
+      map.addOverlay(new BMap.Marker(searchPt)); //添加标注
+    }
     local = new BMap.LocalSearch(map, { //智能搜索
         onSearchComplete: myFun
     });
-    local.search(searchValue);
+    local.search(keyValue);
   }
-  function myFun() {
-    var searchPt = local.getResults().getPoi(0).point; //获取第一个智能搜索的结果
-    map.centerAndZoom(searchPt, 18);
-    map.addOverlay(new BMap.Marker(searchPt)); //添加标注
-  }
+  
 
 
   return (
@@ -148,18 +103,25 @@ function Index(props) {
       <Spin className={isGetCorder == true ? 'mainSpinHide' : 'mainSpin'} size="middle" tip="正在获取您的当前位置..."/>
       {/* 头部搜索栏 */}
       <Flex className="searchTopBar">
-        <div className="areaText" style={{width:'20%',position:'relative'}}>
+        <div className="areaText" style={{flex:1,position:'relative'}}>
           <span style={{display:'inline-block', lineHeight:'45px'}}>成都市</span> 
-          <Icon type={isOpenPop ? 'down' :'right'} onClick={() => handleOpenArea()}  style={{position:'absolute',right:'0',top:'11px'}}></Icon>
+          <Icon type={isOpenPop ? 'down' :'right'} onClick={() => handleOpenArea()}  style={{position:'absolute',right:'8px',top:'11px'}}></Icon>
         </div>
-        <SearchBar
+        <AutoComplete
+          style={{flex:2,borderRadius:'20px',height:'30px',border:'1px solid gray',padding:'0px 10px'}}
+          location = "成都市"
+          onHighlight={e => {console.log("3333")}}
+          onConfirm={e => {console.log("2222",e)}}
+          onSearchComplete={e => {handleSrearchKeyWords(e)}}
+        />
+        {/* <SearchBar
           value={searchValue}
           style={{flex:1}}
           placeholder="请输入地点名称"
           onClear={() => setSearchValue('')}
           onChange = {(value) => setSearchValue(value)}
           onSubmit = {() => handleSrearchKeyWords()}
-        />
+        /> */}
       </Flex>
 
       <BottomNav />
