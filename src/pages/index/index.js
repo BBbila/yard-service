@@ -6,6 +6,8 @@ import { NotificationFilled } from '@ant-design/icons';
 import { Spin } from 'antd';
 import { options } from 'less';
 import AutoComplete from 'react-bmapgl/Services/AutoComplete'
+import { Link } from 'react-router-dom';
+import { CONTEXT } from '../../config/index';
 
 function Index(props) {
   const BMap = window.BMap;
@@ -17,6 +19,7 @@ function Index(props) {
   const [isHidden,setIsHiddenm] = useState(true); //是否隐藏通告栏
   const [isGetCorder,setIsGetCorder] = useState(false);
   const [isOpenPop,setIsOpenPop] = useState(false);
+  const [searchValue,setSearchValue] = useState('');
   
   useEffect(() => {
     map = new BMap.Map("allmap");
@@ -35,6 +38,9 @@ function Index(props) {
       maximumAge: 0
     };
     localgps.getCurrentPosition(showSuccess,showErro,options);
+
+
+    //优化：将定位到的位置存个localStorge，页面挂载时，如果有定位过的坐标，直接渲染当前位置。
    
   },[])
 
@@ -42,26 +48,34 @@ function Index(props) {
   function showSuccess(position) {
     var x = position.coords.longitude;
     var y = position.coords.latitude;
-    var ggPoint = new BMap.Point(x,y);
+    let ggPoint = new BMap.Point(x,y);
     //坐标转换完之后的回调函数
-    var translateCallback = function (data){
-      console.log("8989",data);
+    let translateCallback = function (data){
       if(data.status === 0) {
-        var marker = new BMap.Marker(data.points[0]);
+        let curpoint = new BMap.Point(data.points[0].lng,data.points[0].lat);
+        let marker = new BMap.Marker(data.points[0]);
         map.addOverlay(marker);
         map.centerAndZoom(data.points[0], 18);
         map.panTo(data.points[0]); //移动地图
+        //显示位置附近100m内
+        let circle = new BMap.Circle(
+          curpoint,
+          100,
+          {fillColor:"blue", strokeWeight: 1 ,fillOpacity: 0.3, strokeOpacity: 0.3}
+        );
+        map.addOverlay(circle);
       }
     }
     setTimeout(function(){
-        var convertor = new BMap.Convertor();
-        var pointArr = [];
+        let convertor = new BMap.Convertor();
+        let pointArr = [];
         pointArr.push(ggPoint);
         convertor.translate(pointArr, COORDINATES_WGS84, COORDINATES_BD09, translateCallback);
         //隐藏loading
         setIsGetCorder(true);
         //展示在线人数
         setIsHiddenm(false);
+        setSearchValue('');
     }, 1000);
   }
 
@@ -70,18 +84,15 @@ function Index(props) {
     Toast.info('获取坐标失败');
     console.log("浏览器获取坐标失败原因：",positionError);
   }
-
   
 
   // 选择区域
   function handleOpenArea() {
     setIsOpenPop(!isOpenPop);
-    alert('444')
   }
 
   // 搜索
-  function handleSrearchKeyWords(e) {
-    let keyValue = e.keyword;
+  function handleSrearchKeyWords() {
     map.clearOverlays(); //清除地图上所有覆盖物
     function myFun() {
       let searchPt = local.getResults().getPoi(0).point; //获取第一个智能搜索的结果
@@ -91,9 +102,8 @@ function Index(props) {
     local = new BMap.LocalSearch(map, { //智能搜索
         onSearchComplete: myFun
     });
-    local.search(keyValue);
+    local.search(searchValue);
   }
-  
 
 
   return (
@@ -107,27 +117,20 @@ function Index(props) {
           <span style={{display:'inline-block', lineHeight:'45px'}}>成都市</span> 
           <Icon type={isOpenPop ? 'down' :'right'} onClick={() => handleOpenArea()}  style={{position:'absolute',right:'8px',top:'11px'}}></Icon>
         </div>
-        <AutoComplete
-          style={{flex:2,borderRadius:'20px',height:'30px',border:'1px solid gray',padding:'0px 10px'}}
-          location = "成都市"
-          onHighlight={e => {console.log("3333")}}
-          onConfirm={e => {console.log("2222",e)}}
-          onSearchComplete={e => {handleSrearchKeyWords(e)}}
-        />
-        {/* <SearchBar
+        <SearchBar
           value={searchValue}
-          style={{flex:1}}
+          style={{flex:2}}
           placeholder="请输入地点名称"
           onClear={() => setSearchValue('')}
           onChange = {(value) => setSearchValue(value)}
           onSubmit = {() => handleSrearchKeyWords()}
-        /> */}
+        />
       </Flex>
 
       <BottomNav />
       <Flex className="functionalBtnCon">
-        <Flex.Item><Button type="primary">我要收</Button></Flex.Item>
-        <Flex.Item><Button type="primary">我要取</Button></Flex.Item>
+        <Flex.Item><Link to={`${CONTEXT}/wantReceive`}><Button type="primary" >我要收</Button></Link></Flex.Item>
+        <Flex.Item><Link to={`${CONTEXT}/wantTake`}><Button type="primary">我要取</Button></Link></Flex.Item>
       </Flex>
       <NotificationFilled  className="noticeIcon" onClick={() => setIsHiddenm(!onlineNum)}/>
       <NoticeBar className={isHidden == false ? 'onlineBar' : 'onlineBarHidden'} >

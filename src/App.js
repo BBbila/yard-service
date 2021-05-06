@@ -4,6 +4,8 @@ import Index from './pages/index/index';
 import Mine from './pages/mine/mine';
 import Order from './pages/order/order';
 import Square from './pages/square/square';
+import Receive from './pages/receive/receive';
+
 
 import './App.css';
 
@@ -27,6 +29,7 @@ function App() {
           <Route exact path={`${CONTEXT}/square`} component={Square} />
           <Route exact path={`${CONTEXT}/order`} component={Order} />
           <Route exact path={`${CONTEXT}/mine`} component={Mine} />
+          <Route exact path={`${CONTEXT}/wantReceive`} component={Receive} />
         </Switch>
       </Router>
   );
